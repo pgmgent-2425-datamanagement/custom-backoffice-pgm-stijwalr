@@ -10,12 +10,28 @@
 
 </head>
 <body>
-    <nav class="navbar">
-        <a href="/">Home</a>
-        <a href="#">item 2</a>
-        <a href="#">item 3</a>
-        <a href="#">item 4</a>
-    </nav>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Add 'ms-auto' class to align the navbar items to the right -->
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/books">Books</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/authors">Authors</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/users">users</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
     <main>
         <?= $content; ?>

@@ -1,9 +1,9 @@
 body {
-    max-width: 1000px;
-    margin: 0 auto;
+    margin: 0;
     padding: 1rem;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.5;
+    padding: 0;
 }
 img {
     max-width: 100%;
