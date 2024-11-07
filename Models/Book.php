@@ -33,6 +33,22 @@ class Book extends BaseModel {
         $pdo_statement = $this->db->prepare($sql);
         return $pdo_statement->execute([':id' => $this->id]);
     }
+    
+    public function edit() {
+        // Prepare SQL query to update the book's title and description
+        $sql = "UPDATE `books` SET `title` = :title, `description` = :description WHERE `id` = :id";
+        
+        // Prepare the statement and execute the query with the new values
+        $pdo_statement = $this->db->prepare($sql);
+        $success = $pdo_statement->execute([
+            ':title' => $this->title,
+            ':description' => $this->description,
+            ':id' => $this->id
+        ]);
+        
+        return $success; // Return whether the update was successful
+    }
+    
 
     public function getAuthor() {
         $sql = 'SELECT * FROM `authors` WHERE id = :author_id';
