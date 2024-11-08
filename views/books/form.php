@@ -1,7 +1,7 @@
 <div class="col-lg-3 col-md-4 bg-light p-4">
     <h2>Add Book</h2>
-    <form method="POST">
-        <div class="mb-3">
+    <form action="/books/edit/<?= htmlspecialchars($book->id) ?>" method="POST">
+    <div class="mb-3">
             <label for="title" class="form-label">Book Title</label>
             <input type="text" class="form-control" id="title" name="title" required>
         </div>

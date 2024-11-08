@@ -18,6 +18,24 @@ class AuthorController extends BaseController {
         ]);
     }
 
+    public function edit($id) {
+        // Find the author by ID
+        $author = Author::find($id);
+    
+        if ($author) {
+            // Load the edit form and pass the author details
+            self::loadView('authors/edit', [
+                'author' => $author
+            ]);
+        } else {
+            // Handle case where author is not found
+            self::loadView('error', [
+                'message' => 'Author not found.'
+            ]);
+        }
+    }
+    
+
     // Show detail of a book
     public function delete($id) {
         $author = Author::find($id); // Fetch the author by ID

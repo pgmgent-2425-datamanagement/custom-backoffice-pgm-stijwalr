@@ -26,7 +26,10 @@
           <a class="nav-link" href="/authors">Authors</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/users">users</a>
+          <a class="nav-link" href="/users">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/statistic">Statitsics</a>
         </li>
       </ul>
     </div>

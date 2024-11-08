@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\BaseModel;
 
 class Book extends BaseModel {
-    // Search method to find books by title
     protected function search($search) {
 
         $sql = 'SELECT * FROM `'.$this->table. '` WHERE title LIKE :search OR description LIKE :search ORDER BY id DESC';
@@ -35,10 +34,8 @@ class Book extends BaseModel {
     }
     
     public function edit() {
-        // Prepare SQL query to update the book's title and description
         $sql = "UPDATE `books` SET `title` = :title, `description` = :description WHERE `id` = :id";
         
-        // Prepare the statement and execute the query with the new values
         $pdo_statement = $this->db->prepare($sql);
         $success = $pdo_statement->execute([
             ':title' => $this->title,
@@ -46,7 +43,7 @@ class Book extends BaseModel {
             ':id' => $this->id
         ]);
         
-        return $success; // Return whether the update was successful
+        return $success;
     }
     
 
@@ -56,9 +53,8 @@ class Book extends BaseModel {
         $pdo_statement->execute([':author_id' => $this->author_id]);
         $author_data = $pdo_statement->fetch();
         
-        // Assuming you have an Author model to cast the data to
         $authorModel = new Author();
-        return $authorModel->castToModel($author_data); // This will return the author as a model object
+        return $authorModel->castToModel($author_data);
     }
 }
 

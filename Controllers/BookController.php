@@ -9,7 +9,6 @@ use App\Models\Author;
 
 class BookController extends BaseController {
     
-    // List all books
     public static function list() {
         $search = $_GET['search'] ?? '';
         $books = Book::search($search);
@@ -22,10 +21,9 @@ class BookController extends BaseController {
     }
 
     public function detail($id) {
-        $book = Book::find($id); // Fetch the book by ID
-        $author = $book->getAuthor(); // Get the author of the book
+        $book = Book::find($id);
+        $author = $book->getAuthor();
         
-        // Pass book and author data to the view
         self::loadView('books/detail', [
             'book' => $book,
             'author' => $author
@@ -34,120 +32,153 @@ class BookController extends BaseController {
 
     public static function add() {
         $genres = Genre::all(); 
-        $authors = Author::all(); // Assuming Author::all() fetches all authors
+        $authors = Author::all();
 
-        // Get all genres
-        self::loadView('books/form', ['genres' => $genres,         'authors' => $authors
+        self::loadView('books/form', ['genres' => $genres, 'authors' => $authors]);
+    }
+
+    public static function stats() {
+        $bookGenre = new BookGenre();
+    $booksCountByGenre = $bookGenre->getBooksCountByGenre();
+
+    self::loadView('statistic/page', [
+        'title' => 'Stats',
+        'booksCountByGenre' => $booksCountByGenre
     ]);
     }
 
     public function delete($id) {
-        $book = Book::find($id); // Fetch the book by ID
+        $book = Book::find($id);
         if ($book) {
-            $book->delete(); // Delete the book
+            $book->delete();
         }
-        header('Location: /books'); // Redirect back to the books list
+        header('Location: /books');
     }
 
     public function edit($id) {
-        // Fetch the book and author for the edit form
         $book = Book::find($id);
-        $author = $book->getAuthor();
+        $author = $book->getAuthor(); // To display the current author's details
+        $genres = Genre::all(); // Get all genres
+        $authors = Author::all(); // Get all authors for the dropdown
+        
+        // Check if the form is submitted
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            return $this->saveEdit($id);
+        }
     
-        // Load the edit form view
         self::loadView('books/edit', [
             'book' => $book,
-            'author' => $author
+            'author' => $author,
+            'genres' => $genres,
+            'authors' => $authors, // Pass the list of authors
         ]);
     }
     
     public function saveEdit($id) {
-        // Fetch the book to be edited
         $book = Book::find($id);
         if ($book) {
-            // Update the book with the form data
+            // Update the book details
             $book->title = $_POST['title'];
             $book->description = $_POST['description'];
-            $book->author_id = $_POST['author_id'] ?? $book->author_id; // Update author if needed
+            $book->author_id = $_POST['author_id'] ?? $book->author_id;
     
-            // Save the updated book
+            // Handle genre selection or creation
+            if (isset($_POST['new_genre']) && !empty($_POST['new_genre'])) {
+                $existingGenre = Genre::findByName($_POST['new_genre']);
+                if (!$existingGenre) {
+                    $genreController = new GenreController();
+                    $genreController->save();
+                    $newGenre = Genre::findByName($_POST['new_genre']);
+                    $genre_id = $newGenre->id;
+                } else {
+                    $genre_id = $existingGenre->id;
+                }
+            } else {
+                $genre_id = $_POST['genre_id'];
+            }
+    
+            // Update the book-genre relationship
+            $bookGenre = new BookGenre();
+            $existingBookGenre = $bookGenre->findByBookId($book->id);
+            if ($existingBookGenre) {
+                $bookGenre->updateGenre($book->id, $genre_id);
+            } else {
+                $bookGenre->book_id = $book->id;
+                $bookGenre->genre_id = $genre_id;
+                $bookGenre->save();
+            }
+    
+            $book->genre_id = $genre_id;
             $book->edit();
     
-            // Redirect to the book detail page after the update
             header('Location: /books/' . $book->id);
             exit;
         }
     }
     
     
-
     public function save() {
-        // Handle genre input (either select or new genre)
+        // Check if a new genre is provided
         if (isset($_POST['new_genre']) && !empty($_POST['new_genre'])) {
             // Check if the genre already exists
             $existingGenre = Genre::findByName($_POST['new_genre']);
             
             if (!$existingGenre) {
-                // Save the new genre if it doesn't exist
+                // If the genre does not exist, create a new one
                 $genreController = new GenreController();
-                $genreController->save(); // Save the new genre via GenreController
-        
+                $genreController->save(); // Assuming this method saves the genre
+                
                 // Fetch the newly created genre
                 $newGenre = Genre::findByName($_POST['new_genre']);
-                $genre_id = $newGenre->id;
+                $genre_id = $newGenre->id; // Set the genre_id to the newly created genre's ID
             } else {
-                // Use the existing genre
-                $genre_id = $existingGenre->id;
+                $genre_id = $existingGenre->id; // Use the existing genre ID
             }
         } else {
-            // Use the selected genre
+            // If no new genre, use the selected genre_id
             $genre_id = $_POST['genre_id'];
         }
-        
-        // Handle author input (either select or new author)
+    
+        // Handle author selection or creation
         if (isset($_POST['new_author']) && !empty($_POST['new_author'])) {
             // Check if the author already exists
             $existingAuthor = Author::findByName($_POST['new_author']);
             
             if (!$existingAuthor) {
-                // Create and save the new author if it doesn't exist
+                // If the author does not exist, create a new one
                 $author = new Author();
                 $author->firstname = $_POST['new_author_firstname'];
                 $author->surname = $_POST['new_author_surname'];
                 $author->bio = $_POST['new_author_bio'];
-                $author->save();
+                $author->save(); // Save the new author
                 
-                // Fetch the newly created author
+                // Set the author_id to the newly created author's ID
                 $author_id = $author->id;
             } else {
-                // Use the existing author
-                $author_id = $existingAuthor->id;
+                $author_id = $existingAuthor->id; // Use the existing author ID
             }
         } else {
-            // Use the selected author
+            // If no new author, use the selected author_id
             $author_id = $_POST['author_id'];
         }
-        
-        // Create and save the new book
+    
+        // Now save the book
         $book = new Book();
         $book->title = $_POST['title'];
         $book->description = $_POST['description'];
-        $book->author_id = $author_id; // Associate the book with the author
-        $book->save();
-        
-        // Associate the book with the genre in the book_genre table
+        $book->author_id = $author_id;
+        $book->save(); // Save the book details
+    
+        // Save the book-genre relationship (book_genre table)
         $bookGenre = new BookGenre();
         $bookGenre->book_id = $book->id;
         $bookGenre->genre_id = $genre_id;
-        $bookGenre->save();
+        $bookGenre->save(); // Insert into the book_genre table
         
-        // Redirect to books list
+        // Redirect to the books page or the newly created book's page
         header('Location: /books');
         exit;
     }
     
     
-    
-    
-
 }
