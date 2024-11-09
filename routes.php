@@ -2,36 +2,32 @@
 
 $router->setNamespace('\App\Controllers');
 
-// Home route
 $router->get('/', 'HomeController@index');
 
-// Book routes
-$router->get('/books', 'BookController@list'); // List all books
-$router->get('/books/(\d+)', 'BookController@detail'); // Show detail of a book
-$router->get('/books/add', 'BookController@add'); // Show add book form
-$router->post('/books/add', 'BookController@save'); // Show add book form
-$router->get('/books/delete/(\d+)', 'BookController@delete'); // Delete an author by ID
-$router->get('/books/edit/(\d+)', 'BookController@edit'); // Show edit form
-$router->post('/books/edit/(\d+)', 'BookController@saveEdit'); // Handle edit form submission
+$router->get('/books', 'BookController@list');
+$router->get('/books/(\d+)', 'BookController@detail');
+$router->get('/books/add', 'BookController@add');
+$router->post('/books/add', 'BookController@save');
+$router->get('/books/delete/(\d+)', 'BookController@delete');
+$router->get('/books/edit/(\d+)', 'BookController@edit');
+$router->post('/books/edit/(\d+)', 'BookController@saveEdit');
 
-// Author routes
-$router->get('/authors', 'AuthorController@list'); // List all authors
-$router->get('/authors/(\d+)', 'AuthorController@detail'); // Show detail of a book
-$router->get('/authors/add', 'AuthorController@add'); // Show add book form
+$router->get('/authors', 'AuthorController@list');
+$router->get('/authors/(\d+)', 'AuthorController@detail');
+$router->get('/authors/add', 'AuthorController@add');
 $router->post('/authors/add', 'AuthorController@save');
-$router->get('/authors/delete/(\d+)', 'AuthorController@delete'); // Delete an author by ID
-$router->get('/authors/edit/(\d+)', 'AuthorController@edit'); // Show edit form
-$router->post('/authors/edit/(\d+)', 'AuthorController@saveEdit'); // Handle edit form submission
+$router->get('/authors/delete/(\d+)', 'AuthorController@delete');
+$router->get('/authors/edit/(\d+)', 'AuthorController@edit');
+$router->post('/authors/edit/(\d+)', 'AuthorController@saveEdit');
 
+$router->post('/genres/add', 'GenreController@save');
 
-$router->post('/genres/add', 'GenreController@save'); // Handle genre creation
-
-
-$router->get('/users', 'UserController@list'); // List all users
-$router->get('/users/(\d+)', 'UserController@detail'); // Show detail of a book
-$router->get('/users/add', 'UserController@add'); // Show add book form
-$router->post('/users/add', 'UserController@save'); // Show add book form
-$router->get('/users/delete/(\d+)', 'UserController@delete'); // Delete an author by ID
+$router->get('/users', 'UserController@list');
+$router->get('/users/(\d+)', 'UserController@detail');
+$router->get('/users/add', 'UserController@add');
+$router->post('/users/add', 'UserController@save');
+$router->get('/users/delete/(\d+)', 'UserController@delete');
 $router->get('/users/edit/(\d+)', 'UserController@edit');
+$router->post('/users/edit/(\d+)', 'UserController@saveEdit');
 
-$router->get('/statistic', 'BookController@stats'); // Show statistics
+$router->get('/statistic', 'BookController@stats');

@@ -6,7 +6,6 @@ use App\Models\User;
 
 class UserController extends BaseController {
     
-    // List all users
     public static function list() {
         $search = $_GET['search'] ?? '';
         $users = User::search($search);
@@ -19,69 +18,50 @@ class UserController extends BaseController {
     }
 
     public function detail($id) {
-        $user = User::find($id); // Fetch the user by ID
-        $author = $user->getAuthor(); // Get the author of the user
-        
-        // Pass user and author data to the view
+        $user = User::find($id);
         self::loadView('users/detail', [
             'user' => $user,
-            'author' => $author
         ]);
-    }
+    }    
 
     public static function add() {
-
-        // Get all genres
-        self::loadView('users/edit');
+        self::loadView('users/form');
     }
 
     public function delete($id) {
-        $user = User::find($id); // Fetch the user by ID
+        $user = User::find($id);
         if ($user) {
-            $user->delete(); // Delete the user
+            $user->delete();
         }
-        header('Location: /users'); // Redirect back to the users list
+        header('Location: /users');
     }
 
     public function edit($id) {
-        // Fetch the user and author for the edit form
         $user = User::find($id);
-        $author = $user->getAuthor();
-    
-        // Load the edit form view
         self::loadView('users/edit', [
             'user' => $user,
-            'author' => $author
         ]);
     }
     
     public function saveEdit($id) {
-        // Fetch the user to be edited
         $user = User::find($id);
         if ($user) {
-            // Update the user with the form data
-            $user->title = $_POST['title'];
-            $user->description = $_POST['description'];
-            $user->author_id = $_POST['author_id'] ?? $user->author_id; // Update author if needed
-    
-            // Save the updated user
+            $user->username = $_POST['username'];
+            $user->email = $_POST['email'];
             $user->edit();
-    
-            // Redirect to the user detail page after the update
             header('Location: /users/' . $user->id);
             exit;
         }
     }
     
     public function save() {
-        
-        // Create and save the new user
         $user = new User();
-        $user->username = $_POST['username'];// Associate the user with the author
+        $user->username = $_POST['username'];
+        $user->email = $_POST['email'];
         $user->save();
-        // Redirect to users list
         header('Location: /users');
         exit;
     }
+    
 }
 
